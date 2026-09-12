@@ -1,22 +1,40 @@
 """
 조인성 개인 소개 페이지 · FastAPI 백엔드
 
-2주차 실습워크북의 메모장 API 구조(Pydantic 모델 + CORS 환경변수 + GET/POST/DELETE)를
+2주차 실습워크북의 메모장 API 구조(Pydantic 모델 + CORS 환경변수 + GET/POST/DELETE + SQLAlchemy)를
 그대로 따르고, 메모 대신 '방명록'을 다룬다.
-저장소는 인메모리 리스트라 서버가 재시작되면(Render 슬립 포함) 방명록은 초기화된다.
+저장소: 로컬은 SQLite(guestbook.db), 배포는 Supabase PostgreSQL (환경변수 DATABASE_URL).
 """
 
 import os
 from datetime import datetime, timezone
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
+from sqlalchemy.orm import Session
+
+import models
+from database import Base, SessionLocal, engine, get_db
+
+# 테이블이 없으면 만든다 (models 를 import 한 뒤에 호출해야 테이블 정의를 안다)
+Base.metadata.create_all(bind=engine)
+
+
+def seed_first_entry():
+    """방명록이 비어 있으면 첫 글 하나를 넣어 둔다."""
+    with SessionLocal() as db:
+        if db.query(models.Guestbook).first() is None:
+            db.add(models.Guestbook(name="인성", message="첫 글은 제가 남겨요. 편하게 한 줄 남겨 주세요 🙂"))
+            db.commit()
+
+
+seed_first_entry()
 
 app = FastAPI(
     title="Insung Cho · Intro API",
     description="개인 소개 페이지용 FastAPI 백엔드. 간단한 방명록 API를 제공합니다.",
-    version="2.0.0",
+    version="3.0.0",
 )
 
 # ── CORS: 허용 출처를 환경변수로 (배포 시 Vercel 주소로) ──
@@ -41,22 +59,19 @@ class GuestbookIn(BaseModel):  # 요청 본문: 클라이언트가 보내는 데
 
 
 class GuestbookOut(BaseModel):  # 응답 본문: 서버가 돌려주는 데이터
+    model_config = {"from_attributes": True}  # ORM 객체를 그대로 응답으로 변환
+
     id: int
     name: str
     message: str
     created_at: datetime
 
-
-# ── 인메모리 저장소 (리스트에 저장 → 서버 끄면 사라짐) ──
-guestbook: list[dict] = [
-    {
-        "id": 1,
-        "name": "인성",
-        "message": "첫 글은 제가 남겨요. 편하게 한 줄 남겨 주세요 🙂",
-        "created_at": STARTED_AT,
-    }
-]
-next_id = 2
+    @field_serializer("created_at")
+    def _with_timezone(self, dt: datetime) -> str:
+        # SQLite 는 시간대 정보를 버리므로 UTC 로 명시해 브라우저가 올바르게 해석하게 한다.
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.isoformat()
 
 
 # ── 엔드포인트 ──
@@ -73,29 +88,25 @@ def health():
 
 
 @app.get("/api/guestbook", response_model=list[GuestbookOut], tags=["guestbook"])
-def list_guestbook():
-    return list(reversed(guestbook))  # 최신 글이 위로
+def list_guestbook(db: Session = Depends(get_db)):
+    # 최신 글이 위로
+    return db.query(models.Guestbook).order_by(models.Guestbook.id.desc()).all()
 
 
 @app.post("/api/guestbook", response_model=GuestbookOut, status_code=201, tags=["guestbook"])
-def create_guestbook(entry: GuestbookIn):
-    global next_id
-    new = {
-        "id": next_id,
-        "name": entry.name.strip(),
-        "message": entry.message.strip(),
-        "created_at": datetime.now(timezone.utc),
-    }
-    guestbook.append(new)
-    next_id += 1
+def create_guestbook(entry: GuestbookIn, db: Session = Depends(get_db)):
+    new = models.Guestbook(name=entry.name.strip(), message=entry.message.strip())
+    db.add(new)
+    db.commit()
+    db.refresh(new)  # DB가 채운 id, created_at 을 읽어 온다
     return new
 
 
 @app.delete("/api/guestbook/{entry_id}", tags=["guestbook"])
-def delete_guestbook(entry_id: int):
-    global guestbook
-    for g in guestbook:
-        if g["id"] == entry_id:
-            guestbook = [x for x in guestbook if x["id"] != entry_id]
-            return {"ok": True}
-    raise HTTPException(status_code=404, detail="Guestbook entry not found")
+def delete_guestbook(entry_id: int, db: Session = Depends(get_db)):
+    row = db.get(models.Guestbook, entry_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Guestbook entry not found")
+    db.delete(row)
+    db.commit()
+    return {"ok": True}

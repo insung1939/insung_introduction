@@ -13,7 +13,7 @@ KAIST 디지털금융 MBA 〈클라우드컴퓨팅실습〉 개인 과제입니�
 | 백엔드 Swagger UI (Render) | https://insung-introduction-api.onrender.com/docs |
 | GitHub 저장소 | https://github.com/insung1939/insung_introduction |
 
-> Render 무료 플랜은 15분 동안 요청이 없으면 잠듭니다. 첫 요청이 30~60초 걸릴 수 있고, 그동안 페이지에 "서버를 깨우는 중" 안내가 표시됩니다.
+> Render 무료 플랜은 15분 동안 요청이 없으면 잠듭니다. 첫 요청이 30~60초 걸릴 수 있고, 그동안 페이지에 "서버를 깨우는 중" 안내가 표시됩니다. 방명록은 Supabase에 저장되므로 서버가 재시작돼도 남아 있습니다.
 
 ## 주요 구성
 
@@ -35,6 +35,8 @@ insung_introduction/
 │           └── Guestbook.jsx     # 방명록 (GET / POST / DELETE)
 └── backend/                      # Render — Root Directory: backend
     ├── main.py                   # FastAPI (CORS, Pydantic, 엔드포인트)
+    ├── database.py               # DB 연결 (DATABASE_URL 없으면 SQLite)
+    ├── models.py                 # guestbook 테이블
     ├── requirements.txt
     └── render.yaml               # Render 설정값 참고용
 ```
@@ -57,12 +59,15 @@ insung_introduction/
 | POST | `/api/guestbook` | 방명록 작성 — `name` 1~20자, `message` 1~200자 |
 | DELETE | `/api/guestbook/{id}` | 방명록 삭제 |
 
-2주차 실습워크북의 메모장 API(Pydantic 모델 + CORS 환경변수 + GET/POST/DELETE) 구조를 그대로 따르고, 다루는 데이터만 방명록으로 바꿨습니다. 저장소는 인메모리 리스트라 서버가 재시작되면 방명록은 초기화됩니다.
+2주차 실습워크북의 메모장 API(Pydantic 모델 + CORS 환경변수 + GET/POST/DELETE + SQLAlchemy) 구조를 그대로 따르고, 다루는 데이터만 방명록으로 바꿨습니다.
+
+**저장소**: 로컬에서는 SQLite 파일(`guestbook.db`), 배포에서는 **Supabase PostgreSQL**을 씁니다. `DATABASE_URL` 환경변수가 있으면 그 주소로, 없으면 SQLite로 자동 전환됩니다(`backend/database.py`). 테이블은 첫 실행 때 자동 생성되고, 비어 있으면 첫 글을 하나 넣어 둡니다.
 
 ### 사용 기술
 
 - Frontend: React 19, Vite 8, [Motion](https://motion.dev) (애니메이션), Pretendard
-- Backend: Python 3.13, FastAPI, Uvicorn, Pydantic
+- Backend: Python 3.13, FastAPI, Uvicorn, Pydantic, SQLAlchemy
+- Database: Supabase (PostgreSQL) / 로컬은 SQLite
 - Deploy: Vercel(프론트) · Render(백엔드) · GitHub
 
 ## 로컬 실행
@@ -71,8 +76,8 @@ insung_introduction/
 # 백엔드 → http://localhost:8000 (Swagger: /docs)
 cd backend
 python3 -m venv .venv && source .venv/bin/activate
-pip install "fastapi[standard]"
-fastapi dev main.py
+pip install "fastapi[standard]" sqlalchemy psycopg2-binary
+fastapi dev main.py        # DATABASE_URL 이 없으면 SQLite(guestbook.db) 사용
 
 # 프론트엔드 → http://localhost:5173
 cd frontend
@@ -89,7 +94,7 @@ npm run dev        # .env 의 VITE_API_URL=http://localhost:8000 사용
 | Root Directory | `backend` |
 | Build Command | `pip install -r requirements.txt` |
 | Start Command | `uvicorn main:app --host 0.0.0.0 --port $PORT` |
-| Environment Variable | `ALLOWED_ORIGINS` = Vercel 주소 (끝에 `/` 없이) |
+| Environment Variables | `DATABASE_URL` = Supabase Session pooler 주소, `ALLOWED_ORIGINS` = Vercel 주소 (끝에 `/` 없이) |
 
 **Vercel** (프론트엔드)
 

@@ -11,3 +11,5 @@ services:
     envVars:
       - key: ALLOWED_ORIGINS
         sync: false   # 대시보드에서 Vercel 주소를 입력
+      - key: DATABASE_URL
+        sync: false   # Supabase Session pooler 주소

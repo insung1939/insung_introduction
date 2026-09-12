@@ -13,7 +13,7 @@ export const travelPhotos = [
   { id: "paris", year: 2024, place: "프랑스 · 파리", caption: "에펠탑, 해 질 무렵" },
   { id: "paris2", year: 2024, place: "프랑스 · 파리", caption: "밤이 되면 반짝이는 에펠탑" },
   { id: "london", year: 2024, place: "영국 · 런던", caption: "타워 브리지" },
-  { id: "london_with_sonheungmin", year: 2024, place: "영국 · 런던", caption: "토트넘 홈경기 직관" },
+  { id: "london_with_sonheungmin", year: 2024, place: "영국 · 런던", caption: "토트넘 홈구장에서 손흥민 선수와 함께 (빨간 동그라미)" },
   { id: "netherland_amsterdam", year: 2024, place: "네덜란드 · 암스테르담", caption: "운하와 중앙역 앞" },
   { id: "portugal_porto", year: 2024, place: "포르투갈 · 포르투", caption: "도루 강의 노을" },
   { id: "spain_barcelona", year: 2024, place: "스페인 · 바르셀로나", caption: "사그라다 파밀리아" },
