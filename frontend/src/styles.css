@@ -784,3 +784,43 @@ html.dark .logo-dark {
     animation: none;
   }
 }
+
+/* ── 커스텀 커서 ─────────────────────────── */
+html.has-cursor,
+html.has-cursor a,
+html.has-cursor button,
+html.has-cursor .sticker {
+  cursor: none;
+}
+html.has-cursor input,
+html.has-cursor textarea {
+  cursor: text;
+}
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 200;
+  border-radius: 50%;
+  translate: -50% -50%;
+}
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+}
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid var(--accent);
+  background: var(--accent-soft);
+  mix-blend-mode: multiply;
+}
+html.dark .cursor-ring {
+  mix-blend-mode: screen;
+}
+.cursor-ring.is-link {
+  border-color: transparent;
+}

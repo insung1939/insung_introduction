@@ -4,6 +4,7 @@ import { API_URL } from "./api.js";
 import Hero from "./components/Hero.jsx";
 import { About, Currently, OffWork, WhatIDo } from "./components/Sections.jsx";
 import Guestbook from "./components/Guestbook.jsx";
+import Cursor from "./components/Cursor.jsx";
 
 // 다크 모드: 1주차 실습의 classList.toggle 을 확장 — 시스템 설정을 따르고 선택을 저장한다.
 function useTheme() {
@@ -76,6 +77,7 @@ export default function App() {
 
   return (
     <>
+      <Cursor />
       <Curtain />
       <motion.div className="progress" style={{ scaleX: progress }} aria-hidden="true" />
 
@@ -124,7 +126,7 @@ export default function App() {
           <p>© 2026 Insung Cho</p>
           <ul className="footer-links">
             <li>
-              <a href="https://github.com/insung1939/insung-intro-fullstack" target="_blank" rel="noopener noreferrer">
+              <a href="https://github.com/insung1939/insung_introduction" target="_blank" rel="noopener noreferrer">
                 Source
               </a>
             </li>

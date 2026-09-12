@@ -129,7 +129,7 @@ const aboutLines = [
     데이터를 분석하는 것도 좋아하지만, 분석 결과가 <strong>실제 서비스로 이어질 때</strong> 가장 재미를 느낍니다.
   </>,
   <>
-    요즘은 금융, 데이터, AI가 <strong>만나는 지점</strong>을 계속 공부하고 있습니다.
+    요즘은 MBA에서 <strong>금융 도메인</strong>을 배우고, <strong>바이브 코딩</strong>으로 이것저것 만들어 보고 있습니다.
   </>,
 ];
 

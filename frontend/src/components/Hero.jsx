@@ -53,7 +53,7 @@ export default function Hero() {
           transition={{ delay: base + 0.5, duration: 0.6 }}
         >
           신영증권 미래금융팀에서 금융 데이터와 AI를 활용한 서비스를 만들고 있습니다. 데이터를 분석하는 것을
-          좋아하고, 요즘은 금융과 AI가 만나는 지점을 계속 공부하고 있어요.
+          좋아하고, 요즘은 KAIST MBA에서 금융 도메인을 배우면서 바이브 코딩에 푹 빠져 있어요.
         </motion.p>
 
         <motion.div

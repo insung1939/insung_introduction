@@ -9,16 +9,16 @@ KAIST 디지털금융 MBA 〈클라우드컴퓨팅실습〉 개인 과제입니�
 
 | 항목 | 주소 |
 |---|---|
-| 소개 페이지 + 연동 결과 (Vercel) | https://insung-intro-fullstack.vercel.app |
-| 백엔드 Swagger UI (Render) | https://insung-intro-api.onrender.com/docs |
-| GitHub 저장소 | https://github.com/insung1939/insung-intro-fullstack |
+| 소개 페이지 + 연동 결과 (Vercel) | https://insung-introduction.vercel.app |
+| 백엔드 Swagger UI (Render) | https://insung-introduction-api.onrender.com/docs |
+| GitHub 저장소 | https://github.com/insung1939/insung_introduction |
 
 > Render 무료 플랜은 15분 동안 요청이 없으면 잠듭니다. 첫 요청이 30~60초 걸릴 수 있고, 그동안 페이지에 "서버를 깨우는 중" 안내가 표시됩니다.
 
 ## 주요 구성
 
 ```
-insung-intro-fullstack/
+insung_introduction/
 ├── frontend/                     # Vercel — Root Directory: frontend
 │   ├── index.html                # 페이지 진입점
 │   ├── public/                   # 사진, 신영증권 로고(라이트/다크/심볼)

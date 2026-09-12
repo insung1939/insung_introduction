@@ -62,7 +62,7 @@ next_id = 2
 # ── 엔드포인트 ──
 @app.get("/", tags=["meta"])
 def root():
-    return {"service": "insung-intro-api", "docs": "/docs"}
+    return {"service": "insung-introduction-api", "docs": "/docs"}
 
 
 @app.get("/api/health", tags=["meta"])
