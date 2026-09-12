@@ -2,8 +2,8 @@
 
 KAIST 디지털금융 MBA 〈클라우드컴퓨팅실습〉 개인 과제입니다.
 
-"신영증권에서 금융 데이터와 AI 관련 일을 하는 조인성"을 가볍게 소개하는 한 페이지 홈페이지이고,
-같은 페이지 안에서 Render에 배포한 FastAPI 백엔드를 호출합니다 (인사 버튼 + 방명록).
+"신영증권 미래금융팀에서 금융 데이터와 AI 관련 일을 하는 조인성"을 가볍게 소개하는 한 페이지 홈페이지이고,
+같은 페이지의 방명록이 Render에 배포한 FastAPI 백엔드를 호출합니다.
 
 ## 배포 주소
 
@@ -21,13 +21,13 @@ KAIST 디지털금융 MBA 〈클라우드컴퓨팅실습〉 개인 과제입니�
 insung-intro-fullstack/
 ├── frontend/                     # Vercel — Root Directory: frontend
 │   ├── index.html                # 페이지 진입점
-│   ├── public/insung.jpg         # 프로필 사진
+│   ├── public/                   # 사진, 신영증권 로고(라이트/다크/심볼)
 │   └── src/
 │       ├── App.jsx               # 상단 바, 다크 모드, 섹션 배치
 │       ├── api.js                # fetch 래퍼 (VITE_API_URL)
 │       ├── styles.css            # 흰색 / 짙은 남색 / 회색 토큰, 다크 모드
 │       └── components/
-│           ├── Hero.jsx          # 인사 + 사진 + "Say hello to my backend 👋"
+│           ├── Hero.jsx          # 인사 + 사진 무대(배경 덩어리·틸트·떠다니는 배지)
 │           ├── Sections.jsx      # What I do · About · Currently · Off work
 │           └── Guestbook.jsx     # 방명록 (GET / POST / DELETE)
 └── backend/                      # Render — Root Directory: backend
@@ -38,7 +38,7 @@ insung-intro-fullstack/
 
 ### 페이지 흐름 (한 페이지 스크롤)
 
-1. **Hero** — 이름, `Finance × Data × AI`, 한 줄 소개, 사진. **Say hello to my backend 👋** 버튼을 누르면 `GET /api/profile` 응답이 말풍선으로 나타납니다.
+1. **Hero** — 이름, 소속(신영증권 미래금융팀), 한 줄 소개, 사진. 인트로 커튼이 걷히면 글자가 솟아오르고 사진과 배지가 튀어나옵니다.
 2. **What I do** — Financial Data · AI & LLM · Build Things 카드 3개
 3. **About me** — 세 줄
 4. **Currently** — 요즘 하는 것 4가지
@@ -49,13 +49,12 @@ insung-intro-fullstack/
 
 | Method | Path | 설명 |
 |---|---|---|
-| GET | `/api/health` | 서버 상태 (콜드 스타트 확인용) |
-| GET | `/api/profile` | `{ name, company, focus, message }` |
+| GET | `/api/health` | 서버 상태 (콜드 스타트 안내용) |
 | GET | `/api/guestbook` | 방명록 목록 (최신순) |
 | POST | `/api/guestbook` | 방명록 작성 — `name` 1~20자, `message` 1~200자 |
 | DELETE | `/api/guestbook/{id}` | 방명록 삭제 |
 
-2주차 실습워크북의 메모장 API(Pydantic 모델 + CORS 환경변수 + GET/POST/DELETE) 구조를 그대로 따르고, 다루는 데이터만 프로필·방명록으로 바꿨습니다. 저장소는 인메모리 리스트라 서버가 재시작되면 방명록은 초기화됩니다.
+2주차 실습워크북의 메모장 API(Pydantic 모델 + CORS 환경변수 + GET/POST/DELETE) 구조를 그대로 따르고, 다루는 데이터만 방명록으로 바꿨습니다. 저장소는 인메모리 리스트라 서버가 재시작되면 방명록은 초기화됩니다.
 
 ### 사용 기술
 
@@ -104,9 +103,13 @@ npm run dev        # .env 의 VITE_API_URL=http://localhost:8000 사용
 
 - **콜드 스타트 안내** — 응답이 5초 넘게 없으면 "서버를 깨우는 중"으로 바꿔 무료 서버의 느린 첫 응답을 오류로 오해하지 않게 했습니다.
 - **상태별 화면** — 로딩 스켈레톤, 오류 + 다시 시도, 빈 방명록 문구를 각각 두었습니다.
-- **가벼운 애니메이션** — 스크롤에 따라 섹션이 떠오르고, 사진은 마우스를 따라 살짝 기울고, 방명록 글은 스르륵 들어오고 나갑니다. `prefers-reduced-motion` 설정을 켜면 큰 움직임은 꺼집니다.
+- **애니메이션 (Motion)** — 인트로 커튼, 마스크 아래에서 솟아오르는 제목, 모양이 계속 바뀌는 배경 덩어리, 마우스를 따라 기울어지는 사진과 카드, 스크롤 패럴랙스, 떠다니는 배지, 키워드 띠, 위에서 툭 떨어지는 스티커, 방명록 글의 등장·퇴장. `prefers-reduced-motion` 설정을 켜면 큰 움직임은 꺼집니다.
 - **다크 모드** — 1주차에 배운 클래스 토글을 확장해 시스템 설정을 따르고 선택을 기억합니다.
 - **모바일** — 한 열로 접히는 레이아웃, 큰 터치 영역.
+
+## 이미지 출처
+
+- 신영증권 CI: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:ShinyoungCI.png) (CC BY-SA 4.0)
 
 ## AI 활용
 

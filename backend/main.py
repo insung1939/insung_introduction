@@ -2,7 +2,7 @@
 조인성 개인 소개 페이지 · FastAPI 백엔드
 
 2주차 실습워크북의 메모장 API 구조(Pydantic 모델 + CORS 환경변수 + GET/POST/DELETE)를
-그대로 따르고, 메모 대신 '프로필'과 '방명록'을 다룬다.
+그대로 따르고, 메모 대신 '방명록'을 다룬다.
 저장소는 인메모리 리스트라 서버가 재시작되면(Render 슬립 포함) 방명록은 초기화된다.
 """
 
@@ -15,7 +15,7 @@ from pydantic import BaseModel, Field
 
 app = FastAPI(
     title="Insung Cho · Intro API",
-    description="개인 소개 페이지용 FastAPI 백엔드. 프로필 조회와 간단한 방명록을 제공합니다.",
+    description="개인 소개 페이지용 FastAPI 백엔드. 간단한 방명록 API를 제공합니다.",
     version="2.0.0",
 )
 
@@ -35,13 +35,6 @@ STARTED_AT = datetime.now(timezone.utc)
 
 
 # ── 주고받을 데이터의 모양 (Pydantic) ──
-class Profile(BaseModel):
-    name: str
-    company: str
-    focus: str
-    message: str
-
-
 class GuestbookIn(BaseModel):  # 요청 본문: 클라이언트가 보내는 데이터
     name: str = Field(min_length=1, max_length=20, examples=["하나"])
     message: str = Field(min_length=1, max_length=200, examples=["페이지 잘 봤어요!"])
@@ -77,16 +70,6 @@ def health():
     """프론트엔드가 서버 생존 여부(콜드 스타트 포함)를 확인할 때 쓴다."""
     now = datetime.now(timezone.utc)
     return {"status": "ok", "uptime_seconds": int((now - STARTED_AT).total_seconds())}
-
-
-@app.get("/api/profile", response_model=Profile, tags=["profile"])
-def get_profile():
-    return Profile(
-        name="Insung Cho",
-        company="Shinyoung Securities",
-        focus="Finance × Data × AI",
-        message="Hello from FastAPI! 👋 Render에서 잘 돌아가고 있어요.",
-    )
 
 
 @app.get("/api/guestbook", response_model=list[GuestbookOut], tags=["guestbook"])

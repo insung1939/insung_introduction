@@ -18,7 +18,6 @@ async function request(path, options = {}) {
 
 export const api = {
   health: () => request("/api/health"),
-  profile: () => request("/api/profile"),
   guestbook: {
     list: () => request("/api/guestbook"),
     create: (body) => request("/api/guestbook", { method: "POST", body: JSON.stringify(body) }),

@@ -6,7 +6,7 @@ import { api } from "../api.js";
 export default function Guestbook() {
   const [entries, setEntries] = useState(null); // null = 아직 안 불러옴
   const [error, setError] = useState(null);
-  const [health, setHealth] = useState("checking"); // checking | waking | ok | down
+  const [server, setServer] = useState("checking"); // checking | waking | ok | down
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -15,20 +15,20 @@ export default function Guestbook() {
   const load = useCallback(async () => {
     setError(null);
     try {
-      setEntries(await api.guestbook.list()); // 목록 조회 GET
+      setEntries(await api.guestbook.list()); // GET
     } catch (err) {
       setError(err.message);
     }
   }, []);
 
-  // 처음 뜰 때: 서버 상태 확인 + 목록 불러오기
+  // 처음 뜰 때: 서버가 깨어 있는지 확인 + 목록 불러오기
   useEffect(() => {
     let cancelled = false;
-    const slow = setTimeout(() => !cancelled && setHealth((h) => (h === "checking" ? "waking" : h)), 5000);
+    const slow = setTimeout(() => !cancelled && setServer((s) => (s === "checking" ? "waking" : s)), 5000);
     api
       .health()
-      .then(() => !cancelled && setHealth("ok"))
-      .catch(() => !cancelled && setHealth("down"))
+      .then(() => !cancelled && setServer("ok"))
+      .catch(() => !cancelled && setServer("down"))
       .finally(() => clearTimeout(slow));
     load();
     return () => {
@@ -40,7 +40,7 @@ export default function Guestbook() {
   const submit = async (e) => {
     e.preventDefault();
     if (!name.trim() || !message.trim()) {
-      setFormError("이름과 메시지를 모두 적어 주세요.");
+      setFormError("이름과 한 줄을 모두 적어 주세요.");
       return;
     }
     setSubmitting(true);
@@ -59,39 +59,48 @@ export default function Guestbook() {
   const remove = async (id) => {
     try {
       await api.guestbook.remove(id); // DELETE
-      setEntries((list) => list.filter((g) => g.id !== id)); // 사라지는 애니메이션을 위해 즉시 반영
+      setEntries((list) => list.filter((g) => g.id !== id));
     } catch (err) {
       setFormError(err.message);
     }
   };
 
-  const statusText = {
-    checking: "백엔드 확인 중…",
-    waking: "Render 서버를 깨우는 중 (최대 1분)",
-    ok: "FastAPI 연결됨",
-    down: "백엔드에 연결하지 못했어요",
-  }[health];
-
   return (
     <section className="section container" id="guestbook">
       <motion.div
         className="gb"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ type: "spring", stiffness: 220, damping: 26 }}
+        initial={{ opacity: 0, y: 50, scale: 0.97 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ type: "spring", stiffness: 160, damping: 22 }}
       >
         <div className="gb-top">
-          <h2>방명록 ✍️</h2>
-          <span className={`status ${health}`} aria-live="polite">
-            <span className="status-dot" aria-hidden="true" />
-            {statusText}
-          </span>
+          <div>
+            <p className="section-title">Guestbook</p>
+            <h2>방명록 ✍️</h2>
+          </div>
+          <AnimatePresence>
+            {server === "waking" && (
+              <motion.span
+                key="waking"
+                className="status waking"
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <span className="status-dot" aria-hidden="true" />
+                서버를 깨우는 중이에요 ☕ (최대 1분)
+              </motion.span>
+            )}
+            {server === "down" && (
+              <motion.span key="down" className="status down" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <span className="status-dot" aria-hidden="true" />
+                지금은 서버에 연결되지 않아요
+              </motion.span>
+            )}
+          </AnimatePresence>
         </div>
-        <p className="gb-desc">
-          한 줄 남기면 Render에 있는 FastAPI 서버로 전송됩니다. 실습용 인메모리 저장소라 서버가 재시작되면
-          초기화돼요.
-        </p>
+        <p className="gb-desc">다녀간 흔적을 한 줄 남겨 주세요.</p>
 
         <form className="gb-form" onSubmit={submit}>
           <input
@@ -106,7 +115,7 @@ export default function Guestbook() {
             className="input input-grow"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="한 줄 남기기 (200자 이내)"
+            placeholder="한 줄 남기기"
             maxLength={200}
             aria-label="메시지"
           />
@@ -115,7 +124,7 @@ export default function Guestbook() {
             className="btn btn-primary"
             disabled={submitting}
             whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.95 }}
+            whileTap={{ scale: 0.94 }}
           >
             {submitting ? "남기는 중…" : "남기기"}
           </motion.button>
@@ -128,9 +137,7 @@ export default function Guestbook() {
 
         {error && (
           <div className="error-box" role="alert">
-            <p>
-              <strong>불러오기 실패</strong> · {error}
-            </p>
+            <p>방명록을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</p>
             <button type="button" className="btn btn-ghost btn-sm" onClick={load}>
               다시 시도
             </button>
@@ -153,10 +160,10 @@ export default function Guestbook() {
                   key={g.id}
                   className="gb-item"
                   layout
-                  initial={{ opacity: 0, y: -12, scale: 0.98 }}
+                  initial={{ opacity: 0, y: -20, scale: 0.9 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: 40, height: 0, paddingTop: 0, paddingBottom: 0 }}
-                  transition={{ type: "spring", stiffness: 320, damping: 26 }}
+                  exit={{ opacity: 0, x: 60, height: 0, paddingTop: 0, paddingBottom: 0 }}
+                  transition={{ type: "spring", stiffness: 380, damping: 22 }}
                 >
                   <span className="gb-avatar" aria-hidden="true">
                     {g.name.slice(0, 1)}
