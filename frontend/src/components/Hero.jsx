@@ -52,8 +52,8 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: base + 0.5, duration: 0.6 }}
         >
-          신영증권 미래금융팀에서 금융 데이터와 AI를 활용한 서비스를 만들고 있습니다. 데이터를 분석하는 것을
-          좋아하고, 요즘은 KAIST MBA에서 금융 도메인을 배우면서 바이브 코딩에 푹 빠져 있어요.
+          신영증권 미래금융팀에서 금융 데이터와 AI를 활용한 서비스를 만들고, 다른 부서의 업무 효율화를
+          돕고 있습니다. 요즘은 KAIST MBA에서 금융 도메인을 배우면서 바이브 코딩에 푹 빠져 있어요.
         </motion.p>
 
         <motion.div
@@ -157,8 +157,16 @@ function PhotoStage({ base, reduce }) {
         animate={{ opacity: 1, y: 0, rotate: 0, scale: 1 }}
         transition={{ type: "spring", stiffness: 110, damping: 16, delay: base + 0.15 }}
       >
-        <img src="/insung.jpg" alt="조인성" width="960" height="1200" />
+        <img src="/insung.jpg" alt="프랑스 몽생미셸 앞에서 찍은 조인성" width="960" height="1200" />
         <motion.span className="glare" aria-hidden="true" style={{ "--gx": glareX, "--gy": glareY }} />
+        <motion.span
+          className="photo-loc"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: base + 1.1 }}
+        >
+          📍 Mont-Saint-Michel, France
+        </motion.span>
       </motion.div>
 
       <motion.div

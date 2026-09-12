@@ -1,5 +1,6 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
+import OffWorkModal from "./OffWorkModal.jsx";
 
 const viewport = { once: true, margin: "-60px" };
 
@@ -89,7 +90,7 @@ const rise = {
 const jobs = [
   { emoji: "📊", title: "Financial Data", desc: "금융 데이터를 수집하고 분석해서 콘텐츠와 서비스에 활용합니다." },
   { emoji: "🤖", title: "AI & LLM", desc: "AI와 LLM을 실제 금융 업무에 어떻게 쓸 수 있을지 실험합니다." },
-  { emoji: "🛠️", title: "Build Things", desc: "필요하면 프론트엔드, 백엔드, API, 데이터 파이프라인까지 직접 만듭니다." },
+  { emoji: "🛠️", title: "Build Things", desc: "필요하면 프론트엔드, 백엔드, API, 데이터 파이프라인까지 직접 만들고, 다른 부서의 업무 효율화도 돕습니다." },
 ];
 
 export function WhatIDo() {
@@ -192,22 +193,25 @@ export function Currently() {
   );
 }
 
-/* 4. 일 말고는 — 위에서 툭 떨어지는 스티커 */
+/* 4. 일 말고는 — 위에서 툭 떨어지는 스티커. 누르면 관련 콘텐츠 모달 */
 const stickers = [
-  { emoji: "🏀", text: "NBA 보기" },
-  { emoji: "✈️", text: "힐링하는 여행" },
-  { emoji: "📈", text: "재테크" },
-  { emoji: "📺", text: "유튜브 (무한도전)" },
+  { kind: "sports", emoji: "⚽", text: "스포츠 보기" },
+  { kind: "travel", emoji: "✈️", text: "힐링하는 여행" },
+  { kind: "invest", emoji: "📈", text: "재테크" },
+  { kind: "youtube", emoji: "📺", text: "유튜브 (무한도전)" },
 ];
 
 export function OffWork() {
+  const [open, setOpen] = useState(null);
   return (
     <Section id="offwork" title="Off work" heading="일 말고는">
       <div className="stickers">
         {stickers.map((s, i) => (
-          <motion.span
-            key={s.text}
+          <motion.button
+            type="button"
+            key={s.kind}
             className="sticker"
+            onClick={() => setOpen(s.kind)}
             variants={{
               hidden: { opacity: 0, y: -90, rotate: i % 2 ? 14 : -14, scale: 0.8 },
               show: {
@@ -229,9 +233,14 @@ export function OffWork() {
               {s.emoji}
             </motion.span>
             {s.text}
-          </motion.span>
+            <span className="sticker-hint" aria-hidden="true">+</span>
+          </motion.button>
         ))}
       </div>
+      <motion.p className="offwork-note" variants={rise}>
+        눌러 보면 조금 더 나옵니다.
+      </motion.p>
+      <OffWorkModal kind={open} onClose={() => setOpen(null)} />
     </Section>
   );
 }
