@@ -21,14 +21,17 @@ KAIST 디지털금융 MBA 〈클라우드컴퓨팅실습〉 개인 과제입니�
 insung_introduction/
 ├── frontend/                     # Vercel — Root Directory: frontend
 │   ├── index.html                # 페이지 진입점
-│   ├── public/                   # 사진, 신영증권 로고(라이트/다크/심볼)
+│   ├── public/                   # 사진, 여행 사진(travel/), 신영증권 로고, 파비콘
 │   └── src/
 │       ├── App.jsx               # 상단 바, 다크 모드, 섹션 배치
 │       ├── api.js                # fetch 래퍼 (VITE_API_URL)
+│       ├── offwork.js            # Off work 모달 콘텐츠(문구·사진 목록)
 │       ├── styles.css            # 흰색 / 짙은 남색 / 회색 토큰, 다크 모드
 │       └── components/
 │           ├── Hero.jsx          # 인사 + 사진 무대(배경 덩어리·틸트·떠다니는 배지)
 │           ├── Sections.jsx      # What I do · About · Currently · Off work
+│           ├── OffWorkModal.jsx  # 스포츠/여행 갤러리/재테크/유튜브 모달
+│           ├── Cursor.jsx        # 커스텀 커서
 │           └── Guestbook.jsx     # 방명록 (GET / POST / DELETE)
 └── backend/                      # Render — Root Directory: backend
     ├── main.py                   # FastAPI (CORS, Pydantic, 엔드포인트)
@@ -42,7 +45,7 @@ insung_introduction/
 2. **What I do** — Financial Data · AI & LLM · Build Things 카드 3개
 3. **About me** — 세 줄
 4. **Currently** — 요즘 하는 것 4가지
-5. **Off work** — 일 말고 좋아하는 것들
+5. **Off work** — 스포츠 보기 · 힐링하는 여행 · 재테크 · 유튜브. 각 스티커를 누르면 모달이 열립니다 (여행은 연도별 발자취 + 사진 21장 갤러리와 라이트박스).
 6. **방명록** — 이름과 한 줄을 남기면 FastAPI 서버에 저장되고 목록이 갱신됩니다. 삭제도 됩니다.
 
 ### 백엔드 API
@@ -110,6 +113,7 @@ npm run dev        # .env 의 VITE_API_URL=http://localhost:8000 사용
 ## 이미지 출처
 
 - 신영증권 CI: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:ShinyoungCI.png) (CC BY-SA 4.0)
+- 그 외 사진은 모두 직접 찍은 사진이며, 위치 정보 등 EXIF는 제거했습니다.
 
 ## AI 활용
 

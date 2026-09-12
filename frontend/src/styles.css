@@ -920,6 +920,9 @@ html.dark .cursor-ring {
   margin-bottom: 18px;
 }
 .tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 8px 14px;
   border-radius: 999px;
   border: 1px solid var(--border);
