@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { investing, sports, travelPhotos, travelYears, youtube } from "../offwork.js";
+import { game, investing, sports, travelPhotos, travelYears, youtube } from "../offwork.js";
 
 /* 공통 모달 껍데기: 배경 클릭·Esc로 닫힘, 열려 있는 동안 페이지 스크롤 잠금 */
 export default function OffWorkModal({ kind, onClose }) {
@@ -21,6 +21,7 @@ export default function OffWorkModal({ kind, onClose }) {
     travel: { emoji: "✈️", title: "힐링하는 여행" },
     invest: { emoji: "📈", title: "재테크" },
     youtube: { emoji: "📺", title: "유튜브 (무한도전)" },
+    game: { emoji: "🎮", title: "게임" },
   }[kind];
 
   return (
@@ -57,6 +58,7 @@ export default function OffWorkModal({ kind, onClose }) {
               {kind === "travel" && <Travel />}
               {kind === "invest" && <Invest />}
               {kind === "youtube" && <Youtube />}
+              {kind === "game" && <Game />}
             </div>
           </motion.div>
         </motion.div>
@@ -264,6 +266,28 @@ function Youtube() {
         ))}
       </motion.ul>
       <p className="modal-note">누르면 유튜브 검색 결과로 이동합니다.</p>
+    </>
+  );
+}
+
+/* ── 게임 ───────────────────────────────── */
+function Game() {
+  return (
+    <>
+      <p className="modal-intro">{game.intro}</p>
+      <motion.ul className="principles" variants={stagger} initial="hidden" animate="show">
+        {game.points.map((p) => (
+          <motion.li key={p.title} variants={pop}>
+            <span className="p-emoji" aria-hidden="true">
+              {p.emoji}
+            </span>
+            <div>
+              <strong>{p.title}</strong>
+              <p>{p.desc}</p>
+            </div>
+          </motion.li>
+        ))}
+      </motion.ul>
     </>
   );
 }

@@ -68,3 +68,12 @@ export const youtube = {
   ],
   search: (q) => `https://www.youtube.com/results?search_query=${encodeURIComponent("무한도전 " + q)}`,
 };
+
+export const game = {
+  intro: "요즘 하는 게임은 하스스톤 전장(Battlegrounds)입니다. 한 판이 짧아서 부담 없이 켜게 돼요.",
+  points: [
+    { emoji: "🃏", title: "하스스톤 전장", desc: "8명이 하수인을 사고팔며 마지막까지 살아남는 오토 배틀러" },
+    { emoji: "⏱️", title: "한 판 20분", desc: "퇴근 후 딱 한 판 하기 좋은 길이" },
+    { emoji: "🎲", title: "매 판 다른 전략", desc: "영웅과 등장하는 종족이 매번 달라서 질리지 않아요" },
+  ],
+};

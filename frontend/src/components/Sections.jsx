@@ -199,6 +199,7 @@ const stickers = [
   { kind: "travel", emoji: "✈️", text: "힐링하는 여행" },
   { kind: "invest", emoji: "📈", text: "재테크" },
   { kind: "youtube", emoji: "📺", text: "유튜브 (무한도전)" },
+  { kind: "game", emoji: "🎮", text: "게임 (하스스톤 전장)" },
 ];
 
 export function OffWork() {

@@ -30,7 +30,7 @@ insung_introduction/
 │       └── components/
 │           ├── Hero.jsx          # 인사 + 사진 무대(배경 덩어리·틸트·떠다니는 배지)
 │           ├── Sections.jsx      # What I do · About · Currently · Off work
-│           ├── OffWorkModal.jsx  # 스포츠/여행 갤러리/재테크/유튜브 모달
+│           ├── OffWorkModal.jsx  # 스포츠/여행 갤러리/재테크/유튜브/게임 모달
 │           ├── Cursor.jsx        # 커스텀 커서
 │           └── Guestbook.jsx     # 방명록 (GET / POST / PUT / DELETE)
 └── backend/                      # Render — Root Directory: backend
@@ -47,7 +47,7 @@ insung_introduction/
 2. **What I do** — Financial Data · AI & LLM · Build Things 카드 3개
 3. **About me** — 세 줄
 4. **Currently** — 요즘 하는 것 4가지
-5. **Off work** — 스포츠 보기 · 힐링하는 여행 · 재테크 · 유튜브. 각 스티커를 누르면 모달이 열립니다 (여행은 연도 탭으로 넘겨 보는 사진 21장 갤러리와 라이트박스).
+5. **Off work** — 스포츠 보기 · 힐링하는 여행 · 재테크 · 유튜브 · 게임(하스스톤 전장). 각 스티커를 누르면 모달이 열립니다 (여행은 연도 탭으로 넘겨 보는 사진 21장 갤러리와 라이트박스).
 6. **방명록** — 이름과 한 줄을 남기면 FastAPI 서버(Supabase)에 저장됩니다. 작성·조회·수정·삭제(CRUD)가 모두 됩니다.
 
 ### 백엔드 API
