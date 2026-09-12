@@ -65,7 +65,7 @@ export default function OffWorkModal({ kind, onClose }) {
   );
 }
 
-const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } } };
+const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } } };
 const pop = {
   hidden: { opacity: 0, y: 16, scale: 0.96 },
   show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 260, damping: 22 } },
@@ -101,11 +101,16 @@ function Sports() {
           transition={{ type: "spring", stiffness: 260, damping: 24 }}
         >
           {s.photo ? (
-            <img className="sport-photo" src={`/travel/${s.photo}.jpg`} alt={`${s.name} 관련 사진`} loading="lazy" />
+            <img className="sport-photo" src={s.photo} alt={s.photoAlt || s.name} loading="lazy" />
           ) : (
-            <div className="sport-emoji" aria-hidden="true">
+            <motion.div
+              className="sport-emoji"
+              aria-hidden="true"
+              animate={{ rotate: [0, -8, 8, 0], scale: [1, 1.08, 1] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+            >
               {s.emoji}
-            </div>
+            </motion.div>
           )}
           <p>{s.desc}</p>
         </motion.div>
@@ -114,10 +119,12 @@ function Sports() {
   );
 }
 
-/* ── 여행: 연도별 발자취 + 사진 갤러리 + 라이트박스 ── */
+/* ── 여행: 연도 탭 + 사진 그리드 + 라이트박스 ── */
 function Travel() {
-  const [open, setOpen] = useState(null); // 선택된 사진 index
-  const go = (d) => setOpen((i) => (i + d + travelPhotos.length) % travelPhotos.length);
+  const [year, setYear] = useState(travelYears[travelYears.length - 1]);
+  const photos = travelPhotos.filter((p) => p.year === year);
+  const [open, setOpen] = useState(null); // 선택된 사진 index (현재 연도 안에서)
+  const go = (d) => setOpen((i) => (i + d + photos.length) % photos.length);
 
   useEffect(() => {
     if (open === null) return;
@@ -127,34 +134,49 @@ function Travel() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
+  }, [open, photos.length]);
 
   return (
     <>
       <p className="modal-intro">
-        메인 사진은 <strong>프랑스 몽생미셸</strong>에서 찍었습니다. 낯선 도시를 걷다 보면 머리가 비워져서, 힘들 때마다
-        떠날 계획부터 세워요.
+        힐링을 위해 여행을 떠나곤 합니다. 메인 사진은 <strong>프랑스 몽생미셸</strong>에서 찍었어요.
       </p>
 
-      <motion.ul className="years" variants={stagger} initial="hidden" animate="show">
-        {travelYears.map((y) => (
-          <motion.li key={y.year} variants={pop}>
-            <span className="year">{y.year}</span>
-            <span className="places">{y.places.join(" · ")}</span>
-          </motion.li>
-        ))}
-      </motion.ul>
-
-      <motion.ul className="gallery" variants={stagger} initial="hidden" animate="show">
-        {travelPhotos.map((p, i) => (
-          <motion.li key={p.id} variants={pop}>
-            <button type="button" className="thumb" onClick={() => setOpen(i)} aria-label={`${p.place} 사진 크게 보기`}>
-              <img src={`/travel/${p.id}_thumb.jpg`} alt={p.place} loading="lazy" width="480" height="360" />
-              <span>{p.place}</span>
+      <div className="year-tabs" role="tablist" aria-label="연도">
+        {travelYears.map((y) => {
+          const n = travelPhotos.filter((p) => p.year === y).length;
+          return (
+            <button
+              key={y}
+              type="button"
+              role="tab"
+              aria-selected={y === year}
+              className={`year-tab${y === year ? " is-active" : ""}`}
+              onClick={() => {
+                setYear(y);
+                setOpen(null);
+              }}
+            >
+              {y}
+              <small>{n}</small>
+              {y === year && <motion.span className="year-underline" layoutId="year-underline" />}
             </button>
-          </motion.li>
-        ))}
-      </motion.ul>
+          );
+        })}
+      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.ul key={year} className="gallery" variants={stagger} initial="hidden" animate="show" exit={{ opacity: 0, transition: { duration: 0.12 } }}>
+          {photos.map((p, i) => (
+            <motion.li key={p.id} variants={pop} className={i === 0 && photos.length > 2 ? "is-wide" : ""}>
+              <button type="button" className="thumb" onClick={() => setOpen(i)} aria-label={`${p.place} 사진 크게 보기`}>
+                <img src={`/travel/${p.id}_thumb.jpg`} alt={p.place} loading="lazy" width="480" height="360" />
+                <span>{p.place}</span>
+              </button>
+            </motion.li>
+          ))}
+        </motion.ul>
+      </AnimatePresence>
 
       <AnimatePresence>
         {open !== null && (
@@ -169,17 +191,17 @@ function Travel() {
               ‹
             </button>
             <motion.figure
-              key={travelPhotos[open].id}
+              key={photos[open].id}
               onClick={(e) => e.stopPropagation()}
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ type: "spring", stiffness: 260, damping: 24 }}
             >
-              <img src={`/travel/${travelPhotos[open].id}.jpg`} alt={travelPhotos[open].place} />
+              <img src={`/travel/${photos[open].id}.jpg`} alt={photos[open].place} />
               <figcaption>
-                <strong>{travelPhotos[open].place}</strong> {travelPhotos[open].caption}
+                <strong>{photos[open].place}</strong> {photos[open].caption}
                 <em>
-                  {open + 1} / {travelPhotos.length}
+                  {year} · {open + 1} / {photos.length}
                 </em>
               </figcaption>
             </motion.figure>
@@ -202,7 +224,7 @@ function Invest() {
     <>
       <p className="modal-intro">{investing.intro}</p>
       <motion.ul className="principles" variants={stagger} initial="hidden" animate="show">
-        {investing.principles.map((p) => (
+        {investing.interests.map((p) => (
           <motion.li key={p.title} variants={pop}>
             <span className="p-emoji" aria-hidden="true">
               {p.emoji}

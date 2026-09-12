@@ -1182,3 +1182,56 @@ html.dark .tab.is-active {
     max-height: 92vh;
   }
 }
+
+/* ── 여행 연도 탭 ────────────────────────── */
+.year-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.year-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 8px 12px 10px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.year-tab small {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+.year-tab.is-active {
+  color: var(--accent);
+}
+.year-tab.is-active small {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.year-underline {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: -1px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--accent);
+}
+.gallery li.is-wide {
+  grid-column: span 2;
+}
+.gallery li.is-wide .thumb {
+  aspect-ratio: 8 / 3;
+}

@@ -45,7 +45,7 @@ insung_introduction/
 2. **What I do** — Financial Data · AI & LLM · Build Things 카드 3개
 3. **About me** — 세 줄
 4. **Currently** — 요즘 하는 것 4가지
-5. **Off work** — 스포츠 보기 · 힐링하는 여행 · 재테크 · 유튜브. 각 스티커를 누르면 모달이 열립니다 (여행은 연도별 발자취 + 사진 21장 갤러리와 라이트박스).
+5. **Off work** — 스포츠 보기 · 힐링하는 여행 · 재테크 · 유튜브. 각 스티커를 누르면 모달이 열립니다 (여행은 연도 탭으로 넘겨 보는 사진 21장 갤러리와 라이트박스).
 6. **방명록** — 이름과 한 줄을 남기면 FastAPI 서버에 저장되고 목록이 갱신됩니다. 삭제도 됩니다.
 
 ### 백엔드 API
@@ -113,6 +113,7 @@ npm run dev        # .env 의 VITE_API_URL=http://localhost:8000 사용
 ## 이미지 출처
 
 - 신영증권 CI: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:ShinyoungCI.png) (CC BY-SA 4.0)
+- 르브론 제임스 사진: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:LeBron_James_Lakers_(cropped).jpg), All-Pro Reels (CC BY-SA 2.0)
 - 그 외 사진은 모두 직접 찍은 사진이며, 위치 정보 등 EXIF는 제거했습니다.
 
 ## AI 활용
