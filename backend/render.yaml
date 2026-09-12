@@ -1,0 +1,13 @@
+# Render Blueprint (선택 사항).
+# 대시보드에서 직접 만들 때는 아래 값을 그대로 입력하면 된다.
+services:
+  - type: web
+    name: insung-intro-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ALLOWED_ORIGINS
+        sync: false   # 대시보드에서 Vercel 주소를 입력
