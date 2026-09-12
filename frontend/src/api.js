@@ -21,6 +21,7 @@ export const api = {
   guestbook: {
     list: () => request("/api/guestbook"),
     create: (body) => request("/api/guestbook", { method: "POST", body: JSON.stringify(body) }),
+    update: (id, body) => request(`/api/guestbook/${id}`, { method: "PUT", body: JSON.stringify(body) }),
     remove: (id) => request(`/api/guestbook/${id}`, { method: "DELETE" }),
   },
 };

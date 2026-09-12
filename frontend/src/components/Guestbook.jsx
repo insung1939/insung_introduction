@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { api } from "../api.js";
 
-/* 방명록 — 2주차 메모장 실습(GET/POST/DELETE)과 같은 흐름 */
+/* 방명록 — 2주차 메모장 실습과 같은 흐름 + 수정(PUT)까지: 작성·조회·수정·삭제 */
 export default function Guestbook() {
   const [entries, setEntries] = useState(null); // null = 아직 안 불러옴
   const [error, setError] = useState(null);
@@ -11,6 +11,7 @@ export default function Guestbook() {
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState(null);
+  const [editing, setEditing] = useState(null); // 수정 중인 글 id
 
   const load = useCallback(async () => {
     setError(null);
@@ -54,6 +55,12 @@ export default function Guestbook() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const save = async (id, body) => {
+    const updated = await api.guestbook.update(id, body); // PUT
+    setEntries((list) => list.map((g) => (g.id === id ? updated : g)));
+    setEditing(null);
   };
 
   const remove = async (id) => {
@@ -168,21 +175,38 @@ export default function Guestbook() {
                   <span className="gb-avatar" aria-hidden="true">
                     {g.name.slice(0, 1)}
                   </span>
-                  <div className="gb-body">
-                    <p className="gb-head">
-                      <strong>{g.name}</strong>
-                      <time dateTime={g.created_at}>{timeAgo(g.created_at)}</time>
-                    </p>
-                    <p className="gb-msg">{g.message}</p>
-                  </div>
-                  <button
-                    type="button"
-                    className="link-btn"
-                    onClick={() => remove(g.id)}
-                    aria-label={`${g.name}의 글 삭제`}
-                  >
-                    삭제
-                  </button>
+
+                  {editing === g.id ? (
+                    <EditForm entry={g} onSave={save} onCancel={() => setEditing(null)} />
+                  ) : (
+                    <>
+                      <div className="gb-body">
+                        <p className="gb-head">
+                          <strong>{g.name}</strong>
+                          <time dateTime={g.created_at}>{timeAgo(g.created_at)}</time>
+                        </p>
+                        <p className="gb-msg">{g.message}</p>
+                      </div>
+                      <div className="gb-actions">
+                        <button
+                          type="button"
+                          className="link-btn edit"
+                          onClick={() => setEditing(g.id)}
+                          aria-label={`${g.name}의 글 수정`}
+                        >
+                          수정
+                        </button>
+                        <button
+                          type="button"
+                          className="link-btn"
+                          onClick={() => remove(g.id)}
+                          aria-label={`${g.name}의 글 삭제`}
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </motion.li>
               ))}
             </AnimatePresence>
@@ -190,6 +214,69 @@ export default function Guestbook() {
         )}
       </motion.div>
     </section>
+  );
+}
+
+/* 글 하나를 그 자리에서 고치는 작은 폼 */
+function EditForm({ entry, onSave, onCancel }) {
+  const [name, setName] = useState(entry.name);
+  const [message, setMessage] = useState(entry.message);
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState(null);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!name.trim() || !message.trim()) {
+      setErr("이름과 한 줄을 모두 적어 주세요.");
+      return;
+    }
+    setSaving(true);
+    setErr(null);
+    try {
+      await onSave(entry.id, { name, message });
+    } catch (e2) {
+      setErr(e2.message);
+      setSaving(false);
+    }
+  };
+
+  return (
+    <motion.form
+      className="gb-edit"
+      onSubmit={submit}
+      initial={{ opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      onKeyDown={(e) => e.key === "Escape" && onCancel()}
+    >
+      <input
+        className="input"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        maxLength={20}
+        aria-label="이름 수정"
+        autoFocus
+      />
+      <input
+        className="input input-grow"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        maxLength={200}
+        aria-label="메시지 수정"
+      />
+      {err && (
+        <p className="form-error" role="alert">
+          {err}
+        </p>
+      )}
+      <div className="gb-edit-actions">
+        <button type="submit" className="btn btn-primary" disabled={saving}>
+          {saving ? "저장 중…" : "저장"}
+        </button>
+        <button type="button" className="btn btn-ghost" onClick={onCancel} disabled={saving}>
+          취소
+        </button>
+      </div>
+    </motion.form>
   );
 }
 

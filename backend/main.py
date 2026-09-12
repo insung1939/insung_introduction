@@ -1,7 +1,7 @@
 """
 조인성 개인 소개 페이지 · FastAPI 백엔드
 
-2주차 실습워크북의 메모장 API 구조(Pydantic 모델 + CORS 환경변수 + GET/POST/DELETE + SQLAlchemy)를
+2주차 실습워크북의 메모장 API 구조(Pydantic 모델 + CORS 환경변수 + GET/POST/PUT/DELETE + SQLAlchemy)를
 그대로 따르고, 메모 대신 '방명록'을 다룬다.
 저장소: 로컬은 SQLite(guestbook.db), 배포는 Supabase PostgreSQL (환경변수 DATABASE_URL).
 """
@@ -34,7 +34,7 @@ seed_first_entry()
 app = FastAPI(
     title="Insung Cho · Intro API",
     description="개인 소개 페이지용 FastAPI 백엔드. 간단한 방명록 API를 제공합니다.",
-    version="3.0.0",
+    version="3.1.0",
 )
 
 # ── CORS: 허용 출처를 환경변수로 (배포 시 Vercel 주소로) ──
@@ -100,6 +100,18 @@ def create_guestbook(entry: GuestbookIn, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new)  # DB가 채운 id, created_at 을 읽어 온다
     return new
+
+
+@app.put("/api/guestbook/{entry_id}", response_model=GuestbookOut, tags=["guestbook"])
+def update_guestbook(entry_id: int, entry: GuestbookIn, db: Session = Depends(get_db)):
+    row = db.get(models.Guestbook, entry_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Guestbook entry not found")
+    row.name = entry.name.strip()
+    row.message = entry.message.strip()
+    db.commit()
+    db.refresh(row)
+    return row
 
 
 @app.delete("/api/guestbook/{entry_id}", tags=["guestbook"])

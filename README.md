@@ -32,7 +32,7 @@ insung_introduction/
 │           ├── Sections.jsx      # What I do · About · Currently · Off work
 │           ├── OffWorkModal.jsx  # 스포츠/여행 갤러리/재테크/유튜브 모달
 │           ├── Cursor.jsx        # 커스텀 커서
-│           └── Guestbook.jsx     # 방명록 (GET / POST / DELETE)
+│           └── Guestbook.jsx     # 방명록 (GET / POST / PUT / DELETE)
 └── backend/                      # Render — Root Directory: backend
     ├── main.py                   # FastAPI (CORS, Pydantic, 엔드포인트)
     ├── database.py               # DB 연결 (DATABASE_URL 없으면 SQLite)
@@ -48,7 +48,7 @@ insung_introduction/
 3. **About me** — 세 줄
 4. **Currently** — 요즘 하는 것 4가지
 5. **Off work** — 스포츠 보기 · 힐링하는 여행 · 재테크 · 유튜브. 각 스티커를 누르면 모달이 열립니다 (여행은 연도 탭으로 넘겨 보는 사진 21장 갤러리와 라이트박스).
-6. **방명록** — 이름과 한 줄을 남기면 FastAPI 서버에 저장되고 목록이 갱신됩니다. 삭제도 됩니다.
+6. **방명록** — 이름과 한 줄을 남기면 FastAPI 서버(Supabase)에 저장됩니다. 작성·조회·수정·삭제(CRUD)가 모두 됩니다.
 
 ### 백엔드 API
 
@@ -57,9 +57,10 @@ insung_introduction/
 | GET | `/api/health` | 서버 상태 (콜드 스타트 안내용) |
 | GET | `/api/guestbook` | 방명록 목록 (최신순) |
 | POST | `/api/guestbook` | 방명록 작성 — `name` 1~20자, `message` 1~200자 |
+| PUT | `/api/guestbook/{id}` | 방명록 수정 (이름·메시지) |
 | DELETE | `/api/guestbook/{id}` | 방명록 삭제 |
 
-2주차 실습워크북의 메모장 API(Pydantic 모델 + CORS 환경변수 + GET/POST/DELETE + SQLAlchemy) 구조를 그대로 따르고, 다루는 데이터만 방명록으로 바꿨습니다.
+2주차 실습워크북의 메모장 API(Pydantic 모델 + CORS 환경변수 + GET/POST/PUT/DELETE + SQLAlchemy) 구조를 그대로 따르고, 다루는 데이터만 방명록으로 바꿨습니다.
 
 **저장소**: 로컬에서는 SQLite 파일(`guestbook.db`), 배포에서는 **Supabase PostgreSQL**을 씁니다. `DATABASE_URL` 환경변수가 있으면 그 주소로, 없으면 SQLite로 자동 전환됩니다(`backend/database.py`). 테이블은 첫 실행 때 자동 생성되고, 비어 있으면 첫 글을 하나 넣어 둡니다.
 
